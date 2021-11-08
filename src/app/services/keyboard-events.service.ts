@@ -3,8 +3,8 @@ import { Subject } from 'rxjs';
 
 @Injectable()
 export class KeyboardEventsService {
-  private readonly keydownHandlerVar;
-  private readonly keyupHandlerVar;
+  private readonly keydownHandlerVar: any;
+  private readonly keyupHandlerVar: any;
   private seenKeys = new Set<string>();
   private attached = false;
 
