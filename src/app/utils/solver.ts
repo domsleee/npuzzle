@@ -33,6 +33,10 @@ export class Solver {
     seen.set(initialFlatGrid, 0);
     const solvedFlatGrid = this.getSolvedFlatGrid();
 
+    if (this.flatGridEquals(initialFlatGrid, solvedFlatGrid)) {
+      return this.getZeroMoveResult();
+    }
+
     let numIterations = 0;
     let solvedLength = -1;
 
@@ -78,6 +82,15 @@ export class Solver {
       numIterations,
       pathLength: noSolution ? -1 : seen.get(solvedFlatGrid)!,
       paths: noSolution ? [] : this.backtrack(initialFlatGrid, solvedFlatGrid, pred), // backtrack
+    };
+  }
+
+  private getZeroMoveResult(): SolveResult {
+    return {
+      noSolution: false,
+      numIterations: 0,
+      pathLength: 0,
+      paths: [[]]
     };
   }
 
