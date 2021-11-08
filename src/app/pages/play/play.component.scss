@@ -1,0 +1,48 @@
+$bg-and-border-color: grey;
+$square-color: white; //var(--sub-color);
+$text-color: black; //var(--text-color);
+
+#playContainer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  padding-top: 2rem;
+}
+
+h1 {
+  margin-bottom: 30px;
+}
+
+.puzzle {
+  position: relative;
+  font-size: 45px;
+  width: 3em;
+  height: 3em;
+  background: $bg-and-border-color;
+  border: 1px solid $bg-and-border-color;
+  box-sizing: content-box;
+}
+
+.square {
+  position: absolute;
+  width: 1em;
+  height: 1em;
+  box-sizing: border-box;
+  border: 1px solid $bg-and-border-color;
+  text-align: center;
+  line-height: 1em;
+  border-collapse: collapse;
+  transition: 0.1s;
+  background: $square-color;
+  color: $text-color;
+}
+
+.square span {
+  font-size: 35px;
+  display: block;
+}
+
+.square.zero {
+  opacity: 0;
+}

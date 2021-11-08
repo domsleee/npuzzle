@@ -37,6 +37,7 @@
           },
           "configurations": {
             "production": {
+              "baseHref": "/npuzzle/",
               "budgets": [
                 {
                   "type": "initial",
@@ -58,6 +59,7 @@
               "outputHashing": "all"
             },
             "development": {
+              "baseHref": "/npuzzle/",
               "buildOptimizer": false,
               "optimization": false,
               "vendorChunk": true,
@@ -101,7 +103,8 @@
             "styles": [
               "src/styles.scss"
             ],
-            "scripts": []
+            "scripts": [],
+            "webWorkerTsConfig": "tsconfig.worker.json"
           }
         }
       }

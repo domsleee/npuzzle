@@ -1,0 +1,31 @@
+<div id="playContainer">
+  <h1>N-puzzle</h1>
+  <div class="puzzle" style="margin-bottom: 15px;">
+    <div
+      *ngFor="let square of gameState.squares"
+      class="square"
+      [style.left]="square.c + 'em'"
+      [style.top]="square.r + 'em'"
+      [class.zero]="square.digit === 0"
+    >
+      <span>{{square.digit}}</span>
+    </div>
+  </div>
+  <div class="icon-container"
+    placement="right"
+    ngbTooltip="tipContent"
+    style="margin-bottom: 15px"
+  >
+    <fa-icon
+      [icon]="faRedoAlt"
+      (click)="restart()"
+      class="fa-fw"
+    ></fa-icon>
+  </div>
+  <div>
+    <p>{{gameState.timer | async | timer}}</p>
+    <p>Moves: {{gameState.numMoves}}</p>
+    <p>smallestPath: {{smallestPath == -1 ? '...' : smallestPath}}</p>
+  </div>
+
+</div>

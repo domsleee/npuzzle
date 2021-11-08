@@ -1,1 +1,25 @@
 /* You can add global styles to this file, and also import other style files */
+
+/* Importing Bootstrap SCSS file. */
+$body-bg: var(--bg-color);
+$body-color: var(--text-color);
+
+@import '~bootstrap/scss/bootstrap';
+
+:root {
+  --bg-color: #323437;
+  --text-color: #d1d0c5;
+  --sub-color: #646669;
+  --main-color: #e2b714;
+}
+$body-bg: #000;
+
+.icon-container {
+  color: var(--sub-color);
+  transition: all 0.3s;
+  cursor: pointer;
+}
+
+.icon-container:hover {
+  color: var(--main-color);
+}
