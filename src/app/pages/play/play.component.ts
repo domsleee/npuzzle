@@ -21,7 +21,7 @@ import { faRedoAlt } from '@fortawesome/free-solid-svg-icons';
 export class PlayComponent implements OnInit {
   subs = new Array<Subscription>();
   gameState!: IGameState;
-  smallestPath: number = -1;
+  shortestPath: number = -1;
   n = 3;
   faRedoAlt = faRedoAlt;
   initialGrid?: Grid;
@@ -47,7 +47,7 @@ export class PlayComponent implements OnInit {
         }
       }),
       this.gameService.gameOver.subscribe(() => {
-        setTimeout(() => this.findAndSetSmallestPath(), 100);
+        setTimeout(() => this.findAndSetShortestPath(), 100);
       })
     ];
     const seed = this.activatedRoute.snapshot.params['seed'] ?? getRandomSeed();
@@ -60,13 +60,13 @@ export class PlayComponent implements OnInit {
   }
 
   restart() {
-    this.start(getRandomSeed());
+    this.start(this.activatedRoute.snapshot.params['seed'] ?? getRandomSeed());
   }
 
   private start(seed?: string) {
     console.log(`start with seed ${seed}`)
     if (seed) {
-      this.smallestPath = -1;
+      this.shortestPath = -1;
       this.seed = seed;
     }
     this.gameService.setupGame(this.n, this.seed);
@@ -76,9 +76,9 @@ export class PlayComponent implements OnInit {
     //if (seed) this.findSmallestPath();
   }
 
-  private findAndSetSmallestPath() {
+  private findAndSetShortestPath() {
     const res = this.solveService.getAllPaths(this.initialGrid!);
-    this.smallestPath = res.pathLength;
+    this.shortestPath = res.pathLength;
     console.log(this, res);
   }
 
