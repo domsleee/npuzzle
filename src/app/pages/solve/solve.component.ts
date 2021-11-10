@@ -1,5 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-import { Solver } from 'src/app/utils/solver';
+import { SolveService } from 'src/app/services/solve.service';
+import { AStarSolver } from 'src/app/utils/astar/astar-solver';
+import { Grid, Solver } from 'src/app/utils/solver';
 
 @Component({
   selector: 'app-solve',
@@ -8,16 +10,32 @@ import { Solver } from 'src/app/utils/solver';
 })
 export class SolveComponent implements OnInit {
 
-  constructor() { }
+  constructor(
+    private solverService: SolveService
+  ) { }
 
   ngOnInit(): void {
-    const solver = new Solver(3);
-    const res = solver.getAllPaths([
-      [1,2,3],
-      [4,5,6],
-      [7,0,8]
-    ]);
-    console.log(res);
+    const hardGrid: Grid = [
+      [14,4,1,10],
+      [7,9,0,15],
+      [3,6,8,12],
+      [5,2,13,11]
+    ];
+    const easyGrid: Grid = [
+      [0,2,3],
+      [1,5,6],
+      [4,7,8]
+    ];
+    const mediumGrid: Grid = [
+      [0,1,4],
+      [3,8,5],
+      [7,2,6]
+    ];
+
+    const gridToUse = hardGrid;
+    console.log(this.solverService.getShortestPath(gridToUse));
+    if (gridToUse !== hardGrid) console.log(this.solverService.getAllPaths(gridToUse));
+
   }
 
 }

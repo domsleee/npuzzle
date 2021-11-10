@@ -72,12 +72,13 @@ export class PlayComponent implements OnInit {
     this.gameService.setupGame(this.n, this.seed);
     this.gameState = this.gameService.state;
     this.initialGrid = JSON.parse(JSON.stringify(this.gameState.grid));
+    console.log(JSON.stringify(this.initialGrid));
 
     //if (seed) this.findSmallestPath();
   }
 
   private findAndSetShortestPath() {
-    const res = this.solveService.getAllPaths(this.initialGrid!);
+    const res = this.solveService.getShortestPath(this.initialGrid!);
     this.shortestPath = res.pathLength;
     console.log(this, res);
   }

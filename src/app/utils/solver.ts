@@ -1,5 +1,6 @@
 import { Movement } from './defs';
 import Denque from 'denque';
+import { getSolvedGrid } from './grid-helpers';
 
 export interface SolveResult {
   noSolution: boolean;
@@ -34,7 +35,7 @@ export class Solver {
     const solvedFlatGrid = this.getSolvedFlatGrid();
 
     if (this.flatGridEquals(initialFlatGrid, solvedFlatGrid)) {
-      return this.getZeroMoveResult();
+      return getZeroMoveResult();
     }
 
     let numIterations = 0;
@@ -82,15 +83,6 @@ export class Solver {
       numIterations,
       pathLength: noSolution ? -1 : seen.get(solvedFlatGrid)!,
       paths: noSolution ? [] : this.backtrack(initialFlatGrid, solvedFlatGrid, pred), // backtrack
-    };
-  }
-
-  private getZeroMoveResult(): SolveResult {
-    return {
-      noSolution: false,
-      numIterations: 0,
-      pathLength: 0,
-      paths: [[]]
     };
   }
 
@@ -152,9 +144,7 @@ export class Solver {
   }
 
   private getSolvedFlatGrid(): FlatGrid {
-    const res = Array(this.n * this.n).fill(null).map((t, i) => i+1);
-    res[res.length - 1] = 0;
-    return res;
+    return this.toFlatGrid(getSolvedGrid(this.n));
   }
 }
 
@@ -180,4 +170,13 @@ class MyMap<K extends Array<number>, V> {
   private toKey(key: K): string {
     return key.join('-');
   }
+}
+
+export function getZeroMoveResult(): SolveResult {
+  return {
+    noSolution: false,
+    numIterations: 0,
+    pathLength: 0,
+    paths: [[]]
+  };
 }
