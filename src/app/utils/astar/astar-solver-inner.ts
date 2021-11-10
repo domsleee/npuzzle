@@ -1,7 +1,7 @@
 import { getSolvedGrid } from "../grid-helpers";
 import { permute } from "../helpers";
 import { SolveResult } from "../solver";
-import { getStringCharSet, getZeroChar, getZeroCharCode, toEncodedGridString } from "./astar-solver";
+import { getStringCharSet, toEncodedGridString, ZERO_CHAR, ZERO_CHAR_CODE } from "./astar-solver";
 import { BinaryHeap } from "./binary-heap";
 import { buildResult, getCFromIndex, getRCFromIndex, getRFromIndex } from "./solver-utils";
 
@@ -35,12 +35,13 @@ export class AStarSolverInner {
       for (let newGrid of this.precomputeData.getNewGrids(top)) {
         const shortestDist = dist[newGrid];
         const node = this.getNode(newGrid, top.pathLength+1);
+        const tentativeGuess = heuristicFn(node);
 
-        if (shortestDist != undefined && heuristicFn(node) >= shortestDist) {
+        if (shortestDist != undefined && tentativeGuess >= shortestDist) {
           continue;
         }
         
-        dist[newGrid] = heuristicFn(node);
+        dist[newGrid] = tentativeGuess;
         pq.push(node);
       }
     }
@@ -56,7 +57,7 @@ export class AStarSolverInner {
   private getNode(grid: string, pathLength: number): IAStarNode {
     return {
       grid,
-      zeroIndex: grid.indexOf(this.precomputeData.zeroChar),
+      zeroIndex: grid.indexOf(ZERO_CHAR),
       heuristic: this.getHeuristic(grid),
       pathLength
     }
@@ -65,7 +66,7 @@ export class AStarSolverInner {
   private getHeuristic(grid: string): number {
     let res = 0;
     for (let i = 0; i < grid.length; ++i) {
-      if (grid[i] === this.precomputeData.zeroChar) continue;
+      if (grid[i] === ZERO_CHAR) continue;
       res += this.precomputeData.getTaxiLength(grid[i], i);
     }
     res += 2 * this.precomputeData.getConflicts(grid);
@@ -75,7 +76,6 @@ export class AStarSolverInner {
 type ConflictCache = {[key: number]: {[key: string]: number}};
 
 export class PrecomputeData {
-  zeroChar = getZeroChar();
   solvedString: string;
   readonly n: number;
 
@@ -83,9 +83,11 @@ export class PrecomputeData {
   private taxiCabCache = Array<Array<number>>();
   private rowConflictCache: ConflictCache = {};
   private colConflictCache: ConflictCache = {};
+  private nArray: Array<number> = [];
 
   constructor(n: number) {
     this.n = n;
+    this.nArray = Array(this.n).fill(null).map((t, i) => i);
     this.solvedString = toEncodedGridString(getSolvedGrid(n));
     this.setupSolvedStringCache();
     this.setupTaxiCabCache();
@@ -125,9 +127,9 @@ export class PrecomputeData {
     let res = 0;
     for (let r = 0; r < this.n; ++r) {
       const row = grid.substring(r*this.n, (r+1)*this.n);
-      res += 2 * this.getRowConflicts(r, row);
+      res += 2 * this.rowConflictCache[r][row];// this.getRowConflicts(r, row);
       const col = this.getCol(grid, r);
-      res += 2 * this.getColConflicts(r, col);
+      res += 2 * this.colConflictCache[r][col];// this.getColConflicts(r, col);
     }
     return res;
   }
@@ -181,17 +183,19 @@ export class PrecomputeData {
   }
 
   private getRowConflicts(r: number, row: string): number {
+    return this.rowConflictCache[r][row];
     return this.getFromConflictCache(this.rowConflictCache, r, row);
     return this.getRowConflictsNaive(r, row, char => this.getRowOfChar(char))
   }
 
   private getColConflicts(c: number, col: string): number {
+    return this.colConflictCache[c][col];
     return this.getFromConflictCache(this.colConflictCache, c, col);
     return this.getRowConflictsNaive(c, col, char => this.getColOfChar(char));
   }
 
   private getFromConflictCache(cache: ConflictCache, r: number, row: string) {
-    //if (!(row in cache[r])) throw new Error(`cache miss? cache[${r}][${row}]`);
+    if (!(row in cache[r])) throw new Error(`cache miss? cache[${r}][${row}]`);
     return cache[r][row];
   }
 
@@ -199,12 +203,12 @@ export class PrecomputeData {
     let res = 0;
     //row = row.replace(this.zeroChar, '');
     for (let i = 0; i < row.length-1; ++i) {
-      if (row[i] === this.zeroChar) continue;
+      if (row[i] === ZERO_CHAR) continue;
       const rowITarget = getTarget(row[i]);
       if (rowITarget != r) continue;
 
       for (let j = i+1; j < row.length; ++j) {
-        if (row[j] === this.zeroChar) continue;
+        if (row[j] === ZERO_CHAR) continue;
         res += (row[i] > row[j] && rowITarget === getTarget(row[j])) ? 1 : 0;
       }
     }
@@ -212,6 +216,8 @@ export class PrecomputeData {
   }
 
   private getCol(grid: string, c: number) {
+    return this.nArray.map(t => grid[t*this.n + c]).join('');
+
     let res = '';
     for (let r = 0; r < this.n; ++r) res += grid[r*this.n + c];
     return res;

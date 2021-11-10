@@ -27,7 +27,7 @@ export class AStarSolver {
 export function getStringCharSet(n: number): Array<string> {
   let res = new Array<string>(n*n);
   for (let i = 0; i < n*n; ++i) {
-    res[i] = String.fromCharCode(getZeroCharCode() + i);
+    res[i] = String.fromCharCode(ZERO_CHAR_CODE + i);
   }
   return res;
 }
@@ -36,16 +36,11 @@ export function toEncodedGridString(grid: Readonly<Grid>): string {
   let res = '';
   for (let r = 0; r < grid.length; ++r) {
     for (let c = 0; c < grid.length; ++c) {
-      res += String.fromCharCode(getZeroCharCode() + grid[r][c]);
+      res += String.fromCharCode(ZERO_CHAR_CODE + grid[r][c]);
     }
   }
   return res;
 }
 
-export function getZeroCharCode(): number {
-  return getZeroChar().charCodeAt(0);
-}
-
-export function getZeroChar(): string {
-  return 'A';
-}
+export const ZERO_CHAR = 'A';
+export const ZERO_CHAR_CODE = ZERO_CHAR.charCodeAt(0);
