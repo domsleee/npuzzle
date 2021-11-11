@@ -1,5 +1,5 @@
 <div id="playContainer">
-  <h1>{{n}}-puzzle</h1>
+  <h1>{{n*n-1}}-puzzle</h1>
   <div class="puzzle" style="margin-bottom: 15px;" [style.width]="n + 'em'" [style.height]="n + 'em'">
     <div
       *ngFor="let square of gameState.squares"
