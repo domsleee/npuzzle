@@ -41,11 +41,10 @@ export class PlayComponent implements OnInit {
   ngOnInit(): void {
     this.seed = this.activatedRoute.snapshot.queryParams['seed'];
     const nParam = this.activatedRoute.snapshot.queryParams['n'];
+    this.n = parseInt(nParam ?? DEFAULT_N);
     if (!nParam) {
       this.router.navigate(['/play'], {queryParams: {n: DEFAULT_N}});
-      return;
     }
-    this.n = parseInt(nParam);
 
     this.keyboardEventsService.attachListeners();
     this.subs = [
