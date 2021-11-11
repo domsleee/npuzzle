@@ -6,7 +6,6 @@ import { SolveComponent } from './pages/solve/solve.component';
 const routes: Routes = [
   {path: 'solve', component: SolveComponent},
   {path: 'play', component: PlayComponent},
-  {path: 'play/:seed', component: PlayComponent},
   {path: '**', redirectTo: 'play'},
 ];
 

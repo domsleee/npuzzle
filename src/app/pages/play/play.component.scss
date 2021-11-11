@@ -17,8 +17,6 @@ h1 {
 .puzzle {
   position: relative;
   font-size: 45px;
-  width: 3em;
-  height: 3em;
   background: $bg-and-border-color;
   border: 1px solid $bg-and-border-color;
   box-sizing: content-box;
@@ -45,4 +43,8 @@ h1 {
 
 .square.zero {
   opacity: 0;
+}
+
+.finished {
+  color: var(--main-color);
 }

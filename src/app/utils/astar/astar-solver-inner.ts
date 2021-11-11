@@ -216,7 +216,7 @@ export class PrecomputeData {
   }
 
   private getCol(grid: string, c: number) {
-    return this.nArray.map(t => grid[t*this.n + c]).join('');
+    //return this.nArray.map(t => grid[t*this.n + c]).join('');
 
     let res = '';
     for (let r = 0; r < this.n; ++r) res += grid[r*this.n + c];

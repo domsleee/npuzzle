@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { GameService, IGameState } from 'src/app/services/game.service';
 import { KeyboardEventsService } from 'src/app/services/keyboard-events.service';
@@ -8,6 +8,8 @@ import { KeyCodeMovement, KEYCODE_MOVEMENTS, Movement } from 'src/app/utils/defs
 import { getRandomSeed } from 'src/app/utils/helpers';
 import { Grid, Solver } from 'src/app/utils/solver';
 import { faRedoAlt } from '@fortawesome/free-solid-svg-icons';
+
+const DEFAULT_N = 3;
 
 @Component({
   selector: 'app-play',
@@ -22,20 +24,29 @@ export class PlayComponent implements OnInit {
   subs = new Array<Subscription>();
   gameState!: IGameState;
   shortestPath: number = -1;
-  n = 3;
+  n = DEFAULT_N;
   faRedoAlt = faRedoAlt;
   initialGrid?: Grid;
 
-  private seed: string = '';
+  private seed?: string;
 
   constructor(
     private keyboardEventsService: KeyboardEventsService,
     private gameService: GameService,
     private solveService: SolveService,
-    private activatedRoute: ActivatedRoute
+    private activatedRoute: ActivatedRoute,
+    private router: Router
   ) { }
 
   ngOnInit(): void {
+    this.seed = this.activatedRoute.snapshot.queryParams['seed'];
+    const nParam = this.activatedRoute.snapshot.queryParams['n'];
+    if (!nParam) {
+      this.router.navigate(['/play'], {queryParams: {n: DEFAULT_N}});
+      return;
+    }
+    this.n = parseInt(nParam);
+
     this.keyboardEventsService.attachListeners();
     this.subs = [
       this.keyboardEventsService.keydownFirstTime.subscribe(keyCode => {
@@ -50,7 +61,7 @@ export class PlayComponent implements OnInit {
         setTimeout(() => this.findAndSetShortestPath(), 100);
       })
     ];
-    const seed = this.activatedRoute.snapshot.params['seed'] ?? getRandomSeed();
+    const seed = this.seed ?? getRandomSeed();
     this.start(seed);
   }
 
@@ -60,15 +71,12 @@ export class PlayComponent implements OnInit {
   }
 
   restart() {
-    this.start(this.activatedRoute.snapshot.params['seed'] ?? getRandomSeed());
+    this.start(this.seed ?? getRandomSeed());
   }
 
   private start(seed?: string) {
-    console.log(`start with seed ${seed}`)
-    if (seed) {
-      this.shortestPath = -1;
-      this.seed = seed;
-    }
+    console.log(`start with seed ${seed}`);
+    this.shortestPath = -1;
     this.gameService.setupGame(this.n, this.seed);
     this.gameState = this.gameService.state;
     this.initialGrid = JSON.parse(JSON.stringify(this.gameState.grid));
@@ -80,7 +88,6 @@ export class PlayComponent implements OnInit {
   private findAndSetShortestPath() {
     const res = this.solveService.getShortestPath(this.initialGrid!);
     this.shortestPath = res.pathLength;
-    console.log(this, res);
   }
 
   private doAction(keyCodeMovement: KeyCodeMovement) {

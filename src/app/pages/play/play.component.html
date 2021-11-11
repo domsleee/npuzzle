@@ -1,6 +1,6 @@
 <div id="playContainer">
-  <h1>N-puzzle</h1>
-  <div class="puzzle" style="margin-bottom: 15px;">
+  <h1>{{n}}-puzzle</h1>
+  <div class="puzzle" style="margin-bottom: 15px;" [style.width]="n + 'em'" [style.height]="n + 'em'">
     <div
       *ngFor="let square of gameState.squares"
       class="square"
@@ -23,9 +23,9 @@
     ></fa-icon>
   </div>
   <div>
-    <p>{{gameState.timer | async | timer}}</p>
-    <p>Moves: {{gameState.numMoves}}</p>
-    <p>shortestPath: {{shortestPath == -1 ? '...' : shortestPath}}</p>
+    <p [class.finished]="gameState.gameOver">{{gameState.timer | async | timer}}</p>
+    <p [class.finished]="gameState.gameOver">Moves: {{gameState.numMoves}}</p>
+    <p>shortestPath: {{shortestPath == -1 ? '....' : shortestPath}}</p>
   </div>
 
 </div>
