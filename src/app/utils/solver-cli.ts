@@ -1,14 +1,15 @@
 import { SolveService } from "../services/solve.service";
 // @ts-ignore
 import esMain from 'es-main';
-import { impossibleGrid } from "./solver-cases";
+import { apparently1660, hardGrid, impossibleGrid } from "./solver-cases";
 
 console.log('hi');
 
 export class SolverCli {
   main() {
-    const gridToUse = impossibleGrid;
+    const gridToUse = apparently1660;
     const solverService = new SolveService();
+    console.log(solverService.getShortestPath(gridToUse))
     if (gridToUse.length <= 3) console.log(solverService.getAllPaths(gridToUse));
   }
 }

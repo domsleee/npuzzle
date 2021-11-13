@@ -57,7 +57,10 @@ export class PlayComponent implements OnInit {
         }
       }),
       this.gameService.gameOver.subscribe(() => {
-        setTimeout(() => this.findAndSetShortestPath(), 100);
+        // todo: implement fast enough for n=4
+        if (this.n <= 3) {
+          setTimeout(() => this.findAndSetShortestPath(), 100);
+        }
       })
     ];
     const seed = this.seed ?? getRandomSeed();
@@ -86,6 +89,7 @@ export class PlayComponent implements OnInit {
 
   private findAndSetShortestPath() {
     const res = this.solveService.getShortestPath(this.initialGrid!);
+    console.log(res);
     this.shortestPath = res.pathLength;
   }
 

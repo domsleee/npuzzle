@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { SolveService } from 'src/app/services/solve.service';
-import { hardGrid } from 'src/app/utils/solver-cases';
+import { apparently1660, hardGrid } from 'src/app/utils/solver-cases';
 
 @Component({
   selector: 'app-solve',
@@ -14,8 +14,8 @@ export class SolveComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    const gridToUse = hardGrid;
+    const gridToUse = apparently1660;
     console.log(this.solverService.getShortestPath(gridToUse));
-    if (gridToUse !== hardGrid) console.log(this.solverService.getAllPaths(gridToUse));
+    if (gridToUse.length <= 3) console.log(this.solverService.getAllPaths(gridToUse));
   }
 }

@@ -18,7 +18,8 @@ export function getSolvedGrid(n: number): Grid {
 export function getRandomGrid(n: number, seed?: string) {
   const grid = getSolvedGrid(n);
   const rng = seedrandom(seed ?? getRandomSeed());
-  for (let i = 0; i < 1000; ++i) {
+  const numMoves = n === 3 ? 1000 : 20000;
+  for (let i = 0; i < numMoves; ++i) {
     doAction(grid, ALL_MOVEMENTS[Math.floor(rng() * 4)]);
   }
   return grid;

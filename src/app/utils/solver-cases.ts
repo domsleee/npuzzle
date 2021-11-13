@@ -17,6 +17,13 @@ export const mediumGrid: Grid = [
   [7,2,6]
 ];
 
+export const apparently1660: Grid = [
+  [8,12,11,9],
+  [3,14,15,0],
+  [10,4,5,1],
+  [13,6,7,2]
+];
+
 export const impossibleGrid: Grid = [
   [0,9,6,14,19],
   [7,24,20,15,10],

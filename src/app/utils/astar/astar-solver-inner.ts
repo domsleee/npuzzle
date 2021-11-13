@@ -70,7 +70,7 @@ export class AStarSolverInner {
       res += this.precomputeData.getTaxiLength(grid[i], i);
     }
     res += 2 * this.precomputeData.getConflicts(grid);
-    return res; // res >> 1??
+    return res;
   }
 }
 type ConflictCache = {[key: number]: {[key: string]: number}};
@@ -105,20 +105,21 @@ export class PrecomputeData {
     const [r, c] = getRCFromIndex(zeroIndex, this.n);
     const res = new Array<string>();
     const transformWithSwap = (i: number, j: number): string => {
-      if (i > j) [i,j] = [j,i];
+      //if (i > j) [i,j] = [j,i];
+      //if (i > j) throw new Error(`ok ${i} > ${j}`);
       const str = node.grid;
       const ret = str.substring(0, i)
         + str[j]
         + str.substring(i+1, j)
         + str[i]
         + str.substring(j+1);
-      if (ret.length !== str.length) throw new Error('???');
+      //if (ret.length !== str.length) throw new Error('???');
       return ret;
     };
 
-    if (r !== 0) res.push(transformWithSwap(zeroIndex, zeroIndex - this.n));
+    if (r !== 0) res.push(transformWithSwap(zeroIndex - this.n, zeroIndex));
     if (r !== this.n-1) res.push(transformWithSwap(zeroIndex, zeroIndex + this.n));
-    if (c !== 0) res.push(transformWithSwap(zeroIndex, zeroIndex - 1));
+    if (c !== 0) res.push(transformWithSwap(zeroIndex - 1, zeroIndex));
     if (c !== this.n-1) res.push(transformWithSwap(zeroIndex, zeroIndex + 1));
     return res;
   }
@@ -127,9 +128,9 @@ export class PrecomputeData {
     let res = 0;
     for (let r = 0; r < this.n; ++r) {
       const row = grid.substring(r*this.n, (r+1)*this.n);
-      res += 2 * this.rowConflictCache[r][row];// this.getRowConflicts(r, row);
+      res += this.rowConflictCache[r][row];// this.getRowConflicts(r, row);
       const col = this.getCol(grid, r);
-      res += 2 * this.colConflictCache[r][col];// this.getColConflicts(r, col);
+      res += this.colConflictCache[r][col];// this.getColConflicts(r, col);
     }
     return res;
   }
@@ -199,19 +200,35 @@ export class PrecomputeData {
     return cache[r][row];
   }
 
-  private getRowConflictsNaive(r: number, row: string, getTarget: (char: string) => number): number {
+  getRowConflictsNaive(r: number, row: string, getTarget: (char: string) => number): number {
     let res = 0;
-    //row = row.replace(this.zeroChar, '');
-    for (let i = 0; i < row.length-1; ++i) {
-      if (row[i] === ZERO_CHAR) continue;
-      const rowITarget = getTarget(row[i]);
-      if (rowITarget != r) continue;
-
-      for (let j = i+1; j < row.length; ++j) {
-        if (row[j] === ZERO_CHAR) continue;
-        res += (row[i] > row[j] && rowITarget === getTarget(row[j])) ? 1 : 0;
+    while (true) {
+      let rowConflicts = new Array(row.length).fill(0);
+      let M = 0;
+      for (let i = 0; i < row.length-1; ++i) {
+        if (row[i] === ZERO_CHAR) continue;
+        const rowITarget = getTarget(row[i]);
+        if (rowITarget != r) continue;
+  
+        for (let j = i+1; j < row.length; ++j) {
+          if (row[j] === ZERO_CHAR) continue;
+          if (row[i] > row[j] && rowITarget === getTarget(row[j])) {
+            rowConflicts[i]++;
+            rowConflicts[j]++;
+            M = Math.max(M, Math.max(rowConflicts[i], rowConflicts[j]));
+          }
+        }
+      }
+      if (M > 0) {
+        res++;
+        const maxInd = rowConflicts.indexOf(M);
+        row = row.substring(0, maxInd) + row.substring(maxInd + 1);
+      } else {
+        break;
       }
     }
+    //row = row.replace(this.zeroChar, '');
+    
     return res;
   }
 
